@@ -1,0 +1,7 @@
+; $Id$
+name = Domain Switcher
+description = Provides a dropdown to switch domain
+core = 6.x
+package = Domain Access
+dependencies[] = domain
+

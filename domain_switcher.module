@@ -1,0 +1,68 @@
+<?php
+// $Id$
+
+/**
+ * @file
+ * Provides a dropdown to switch domain
+ */
+
+
+/*
+ * Implementation of hook_init
+ */
+function domain_switcher_init() {
+  drupal_add_js(drupal_get_path('module', 'domain_switcher') . '/js/domain_switcher.js');
+}
+
+/*
+ * Implementation of hook_block
+ */
+function domain_switcher_block($op = 'list', $delta = 0, $edit = array()) {
+  $block = array();
+  switch ($op) {
+    case 'list':
+      $block[0]['info'] = t('Domain switcher dropdown');
+      $block[0]['cache'] = BLOCK_NO_CACHE;
+      return $block;
+    case 'view':
+      switch ($delta) {
+        case 0:          
+          $domains = domain_domains();
+          $block['subject'] = t('Switch domain');
+          $block['content'] = theme('domain_switcher', $domains);
+        break;
+      }
+      return $block;
+  }  
+}
+
+/*
+ * Implementation of hook_theme
+ */
+function domain_switcher_theme() {
+  return array(
+    'domain_switcher' => array(
+      'arguments' => array('domains' => NULL),
+    )
+  );
+}
+
+
+/*
+ * Theme function for domain_switcher
+ */
+function theme_domain_switcher($domains) {
+  $active = domain_get_domain();
+  $output .= '<select id="domain-dd">';
+  foreach($domains as $domain) {
+    $op = '';
+    if($domain['domain_id'] == $active['domain_id']){
+      $op = "selected";
+    }
+    $output .= '<option value="' . $domain['path'] . '" '. $op .'>' . $domain['sitename'] . '</option>';
+  }
+  $output .= '</select>';
+  
+  return $output;
+}
+
